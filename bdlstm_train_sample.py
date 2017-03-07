@@ -13,8 +13,8 @@ from __future__ import print_function
 
 import tensorflow as tf
 from tensorflow.python.ops import ctc_ops as ctc
-from tensorflow.python.ops import rnn_cell
-from tensorflow.python.ops.rnn import bidirectional_rnn
+#from tensorflow.python.ops import rnn_cell
+#from tensorflow.python.ops.rnn import bidirectional_rnn
 import numpy as np
 from utils import load_batched_data
 
@@ -68,9 +68,9 @@ with graph.as_default():
     biasesClasses = tf.Variable(tf.zeros([nClasses]))
 
     ####Network
-    forwardH1 = rnn_cell.LSTMCell(nHidden, use_peepholes=True, state_is_tuple=True)
-    backwardH1 = rnn_cell.LSTMCell(nHidden, use_peepholes=True, state_is_tuple=True)
-    fbH1, _, _ = bidirectional_rnn(forwardH1, backwardH1, inputList, dtype=tf.float32,
+    forwardH1 = tf.nn.rnn_cell.LSTMCell(nHidden, use_peepholes=True, state_is_tuple=True)
+    backwardH1 = tf.nn.rnn_cell.LSTMCell(nHidden, use_peepholes=True, state_is_tuple=True)
+    fbH1, _, _ = tf.nn.bidirectional_rnn(forwardH1, backwardH1, inputList, dtype=tf.float32,
                                        scope='BDLSTM_H1')
     fbH1rs = [tf.reshape(t, [batchSize, 2, nHidden]) for t in fbH1]
     outH1 = [tf.reduce_sum(tf.mul(t, weightsOutH1), reduction_indices=1) + biasesOutH1 for t in fbH1rs]
